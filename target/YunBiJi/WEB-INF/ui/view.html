@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Insert title here</title>
+</head>
+<script charset="utf-8" src="kindeditor/kindeditor-all.js"></script>
+<script charset="utf-8" src="kindeditor/lang/zh-CN.js"></script>
+<script charset="utf-8" src="kindeditor/plugins/code/prettify.js"></script>
+<script src="jquery1.9.js"></script>
+<script>
+	KindEditor.ready(function(K) {
+		window.editor = K.create('#editor_id');
+	});
+	KindEditor.ready(function(K) {
+		var editor1 = K.create('textarea[name="content1"]', {
+			cssPath : '../plugins/code/prettify.css',
+			uploadJson : '../jsp/upload_json.jsp',
+			fileManagerJson : '../jsp/file_manager_json.jsp',
+			allowFileManager : true,
+			afterCreate : function() {
+				var self = this;
+				K.ctrl(document, 13, function() {
+					self.sync();
+					document.forms['example'].submit();
+				});
+				K.ctrl(self.edit.doc, 13, function() {
+					self.sync();
+					document.forms['example'].submit();
+				});
+			}
+		});
+		prettyPrint();
+	});
+	$("#editor_id").val();
+	$(function() {
+	
+	})
+	function file(id) {
+			$("#zm").val(id);
+		 $.post("/YunBiJi/selectneirong",{id:id},function(a){
+			 editor.html(a);
+            })
+	}
+	function zu(id) {
+		$.post("/YunBiJi/selectwjm",{id:id},function(a){
+			$("#wjm").empty();
+			$("#wjm").append(a);
+           })
+	}
+</script>
+
+<body>
+	<!-- 文件组 名-->
+	<table>
+		<tr>
+			<td align="center">文件组</td>
+			<td align="center">文件</td>
+			<td align="center">内容</td>
+		</tr>
+		<tr>
+			<td>
+				<div id="wjz" >
+					<% for(a in list1!){ %>
+					<p>
+						<span onclick="zu('${a.id}')">${a.name}</span><a href=""
+							style="color: red">X</a>
+					</p>
+					<br> <% } %>
+				</div>
+			</td>
+			<td>
+				<!-- 文件名组 -->
+				<div id="wjm" >
+					<% for(b in list2!){ %>
+					<p>
+						<span onclick="file('${b.id}')">${b.name}</span><a href=""
+							style="color: red">X</a>
+					</p>
+					<br> <% } %>
+				</div>
+			</td>
+
+			<td>
+				<div>
+					<form name="example" method="post" action="savefile">
+						<input id="zm" name="zm" type="hidden" value="" />
+						<textarea id="editor_id" name="content"
+							style="width: 700px; height: 300px;" > 
+				</textarea>
+						<input type="submit" name="button" value="提交内容" />
+					</form>
+				</div>
+			</td>
+		<tr>
+	</table>
+</body>
+</html>
